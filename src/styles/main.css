@@ -25,9 +25,12 @@
 }
 
 /* Buttons render in mixed case like the reference app, not Vuetify's
-   uppercase default (SPEC.md section 10). */
+   uppercase default. Vuetify's 0.0892857143em letter spacing is a Material 2
+   value meant for all-caps labels; M3 labelLarge uses practically normal
+   tracking (SPEC.md section 10). */
 .v-btn {
   text-transform: none;
+  letter-spacing: normal;
 }
 
 /* Roboto or an equivalent system font; only weights 400 and 500 are used. */

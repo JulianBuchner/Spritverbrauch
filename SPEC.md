@@ -520,7 +520,7 @@ Bordeaux-Theme, dunkel: `surface #1A1114`, `surfaceContainerHigh #23181C`,
 | Karten-Innenabstand | 12 px 14 px |
 | Abstand zwischen Karten | 12 px |
 | Textfeldradius | 4 px (Vuetify `outlined`-Default) |
-| Buttons | Pille, `text-transform: none` |
+| Buttons | Pille, `text-transform: none`, `letter-spacing: normal` |
 | FAB | 56 px, Radius 16 px |
 | AppBar-Titel | 22 px |
 | Drawer-Titel | 28 px |
@@ -532,6 +532,12 @@ Bordeaux-Theme, dunkel: `surface #1A1114`, `surfaceContainerHigh #23181C`,
 | Labels, Stichprobenhinweis | 12 px |
 
 **Zwei Schriftstärken, nichts dazwischen:** 400 regular, 500 medium.
+
+Zu den Buttons: Vuetify setzt `.v-btn` auf Großschreibung und `letter-spacing:
+0.0892857143em`. Beides stammt aus Material 2, wo Buttonlabels in Versalien gesetzt wurden —
+Sperrung macht Versalien lesbarer. Material 3 setzt `labelLarge` auf 0,1 px Laufweite, also
+praktisch normal. Beide Vuetify-Defaults werden deshalb global überschrieben, nicht pro
+Komponente.
 
 ---
 
