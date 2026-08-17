@@ -2,6 +2,7 @@ import js from '@eslint/js'
 import pluginVue from 'eslint-plugin-vue'
 import tseslint from 'typescript-eslint'
 import prettier from 'eslint-config-prettier'
+import globals from 'globals'
 
 export default tseslint.config(
   { ignores: ['dist/', 'dev-dist/', 'node_modules/'] },
@@ -14,7 +15,7 @@ export default tseslint.config(
       parserOptions: { parser: tseslint.parser },
       // no-undef stays active in .vue files (unlike .ts, where
       // typescript-eslint turns it off), so browser globals are needed.
-      globals: { window: 'readonly', document: 'readonly' },
+      globals: { ...globals.browser },
     },
   },
   {
