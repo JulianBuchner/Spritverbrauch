@@ -44,8 +44,30 @@ export const strings = {
 
   // Placeholders and empty state
   graphPlaceholder: 'Der Graph folgt in einem späteren Subtask.',
-  entryFormPlaceholder: 'Das Eintragsformular folgt in Subtask 4.',
   emptyNoCarsHint: 'Noch kein Fahrzeug vorhanden.',
+
+  // Entry form
+  entryFormTitleNew: 'Eintrag hinzufügen',
+  entryFormTitleEdit: 'Eintrag bearbeiten',
+  fieldCar: 'Fahrzeug',
+  fieldTripKm: 'Gefahrene km',
+  fieldLiters: 'Getankte Liter',
+  fieldCost: 'Bezahlter Gesamtpreis',
+  fieldDate: 'Datum:',
+  today: 'Heute',
+  fieldIsFull: 'Volltankung',
+  fieldCountInStats: 'In Berechnungen einbeziehen',
+  fieldNote: 'Notiz',
+  confirm: 'Bestätigen',
+  errorRequired: 'Pflichtfeld',
+  errorInteger: 'Ganze Zahl ≥ 0 angeben',
+  errorDecimal: 'Zahl ≥ 0 angeben',
+  zeroValueHint:
+    'Ein Wert ist 0 — der Eintrag wird nicht in die Durchschnitte einbezogen. ' +
+    'Zum Einbeziehen den Schalter wieder einschalten.',
+  discardTitle: 'Ungespeicherte Änderungen',
+  discardMessage: 'Sollen die Änderungen verworfen werden?',
+  discard: 'Verwerfen',
 
   // Appearance
   themeMode: 'Design',

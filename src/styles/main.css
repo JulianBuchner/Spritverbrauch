@@ -11,6 +11,7 @@
   --sv-font-drawer-title: 28px;
   --sv-font-metric-value: 20px;
   --sv-font-metric-unit: 11px;
+  --sv-font-total-label: 16px;
   --sv-font-card-date: 16px;
   --sv-font-list-item: 16px;
   --sv-font-label: 12px;
@@ -21,6 +22,12 @@
 /* AppBar title size per SPEC.md section 10 (class set on v-app-bar-title). */
 .appbar-title {
   font-size: var(--sv-font-appbar-title);
+}
+
+/* Buttons render in mixed case like the reference app, not Vuetify's
+   uppercase default (SPEC.md section 10). */
+.v-btn {
+  text-transform: none;
 }
 
 /* Roboto or an equivalent system font; only weights 400 and 500 are used. */

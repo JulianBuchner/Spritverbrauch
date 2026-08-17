@@ -396,8 +396,17 @@ Alle Textfelder `variant="outlined"`.
 
 Validierung: Fehler direkt am Feld, `Bestätigen` bleibt klickbar und zeigt die Fehler an
 (kein deaktivierter Button). Ein Eintrag mit `tripKm === 0` ist **erlaubt** — er ist dann
-nur nicht in den Durchschnitten. Beim Speichern eines Eintrags mit einem Nullwert wird
-`countInStats` automatisch vorgeschlagen als `false`, kann aber übersteuert werden.
+nur nicht in den Durchschnitten.
+
+Enthält eines der drei Zahlenfelder den Wert 0, wird `countInStats` **beim Verlassen des
+Felds** auf `false` gestellt und darunter ein Hinweis eingeblendet, warum. Der Nutzer kann
+den Switch anschließend zurückschalten. Der Vorschlag greift nur einmal pro Feld, damit ein
+manuelles Zurückschalten nicht überschrieben wird.
+
+Der erste Klick auf `Bestätigen` speichert. Er darf **nicht** dazu benutzt werden, den
+Vorschlag anzuzeigen und das Speichern zu verweigern — das ist ein stilles Fehlschlagen der
+Hauptaktion, und der Switch liegt womöglich außerhalb des sichtbaren Bereichs, weil
+`Bestätigen` am unteren Rand angeheftet ist.
 
 ### 9.4 Graph (`/graph`)
 
@@ -511,7 +520,7 @@ Bordeaux-Theme, dunkel: `surface #1A1114`, `surfaceContainerHigh #23181C`,
 | Karten-Innenabstand | 12 px 14 px |
 | Abstand zwischen Karten | 12 px |
 | Textfeldradius | 4 px (Vuetify `outlined`-Default) |
-| Buttons | Pille |
+| Buttons | Pille, `text-transform: none` |
 | FAB | 56 px, Radius 16 px |
 | AppBar-Titel | 22 px |
 | Drawer-Titel | 28 px |

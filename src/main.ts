@@ -7,6 +7,7 @@ import { createPinia } from 'pinia'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
+import { de } from 'vuetify/locale'
 
 import App from './App.vue'
 import { router } from './router'
@@ -17,6 +18,10 @@ const { light, dark } = buildVuetifyThemes(DEFAULT_SEED_COLOR)
 const vuetify = createVuetify({
   components,
   directives,
+  // German built-in component texts; the date picker formats via de-AT so
+  // month names match SPEC.md section 8 (Jänner, not Januar).
+  locale: { locale: 'de', messages: { de } },
+  date: { locale: { de: 'de-AT' } },
   theme: {
     // 'system' follows prefers-color-scheme reactively (Vuetify built-in).
     defaultTheme: 'system',

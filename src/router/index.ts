@@ -11,7 +11,6 @@ export const router = createRouter({
   history: createWebHashHistory(),
   routes: [
     { path: '/', name: 'home', component: HomeView },
-    // Placeholder targets until subtask 4 delivers the entry form.
     { path: '/entry/new', name: 'entry-new', component: EntryFormView },
     { path: '/entry/:id', name: 'entry-edit', component: EntryFormView },
     { path: '/cars', name: 'cars', component: CarsView },

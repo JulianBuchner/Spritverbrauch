@@ -34,7 +34,7 @@ const averages = computed(() => carAverages(props.entries))
 
 <style scoped>
 .totals-label {
-  font-size: var(--sv-font-card-date);
+  font-size: var(--sv-font-total-label);
   color: rgb(var(--v-theme-primary));
   margin-bottom: 4px;
 }

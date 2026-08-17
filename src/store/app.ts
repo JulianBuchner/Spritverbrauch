@@ -157,6 +157,18 @@ export const useAppStore = defineStore('app', {
         })
     },
 
+    addEntry(entry: Entry) {
+      this.database.entries.push(entry)
+      this.persistNow()
+    },
+
+    updateEntry(updated: Entry) {
+      const index = this.database.entries.findIndex((entry) => entry.id === updated.id)
+      if (index === -1) return
+      this.database.entries.splice(index, 1, updated)
+      this.persistNow()
+    },
+
     // Deletes immediately, no confirmation dialog; the snackbar's undo action
     // is the safety net (SPEC.md section 9.2). Restoring at the original
     // array index keeps the display position, because the display sort is
