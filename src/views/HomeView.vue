@@ -1,100 +1,53 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useSettingsStore } from '../store/settings'
+import { useAppStore } from '../store/app'
 import { strings } from '../strings'
+import CarDialog from '../components/CarDialog.vue'
 
-// Placeholder screen for subtask 0; replaced by the real screens in subtask 2.
-const settings = useSettingsStore()
-const drawerOpen = ref(false)
-
-const seedInput = ref(settings.seedColor)
-
-function onSeedInput(value: string) {
-  seedInput.value = value
-  if (/^#[0-9a-fA-F]{6}$/.test(value)) {
-    settings.seedColor = value
-  }
-}
-
-const seedRule = (value: string) =>
-  /^#[0-9a-fA-F]{6}$/.test(value) || strings.seedColorInvalid
+// Entries view placeholder; the real entry list comes in subtask 3.
+const store = useAppStore()
+const addCarDialogOpen = ref(false)
 </script>
 
 <template>
-  <v-app-bar>
-    <v-app-bar-nav-icon @click="drawerOpen = !drawerOpen" />
-    <v-app-bar-title>{{ strings.appTitle }}</v-app-bar-title>
+  <v-app-bar flat>
+    <v-app-bar-nav-icon @click="store.drawerOpen = true" />
+    <v-app-bar-title class="appbar-title">
+      {{ store.activeCar?.name ?? strings.appTitle }}
+    </v-app-bar-title>
   </v-app-bar>
 
-  <v-navigation-drawer v-model="drawerOpen" temporary>
-    <div class="drawer-title">{{ strings.appTitle }}</div>
-  </v-navigation-drawer>
-
   <v-main>
-    <div class="placeholder">
-      <p class="placeholder-text">{{ strings.noData }}</p>
-
-      <v-btn-toggle
-        :model-value="settings.themeMode"
-        mandatory
-        divided
-        @update:model-value="settings.themeMode = $event"
-      >
-        <v-btn value="light">{{ strings.themeModeLight }}</v-btn>
-        <v-btn value="dark">{{ strings.themeModeDark }}</v-btn>
-        <v-btn value="system">{{ strings.themeModeSystem }}</v-btn>
-      </v-btn-toggle>
-
-      <v-text-field
-        :model-value="seedInput"
-        :label="strings.seedColor"
-        :rules="[seedRule]"
-        variant="outlined"
-        class="seed-field"
-        @update:model-value="onSeedInput"
-      >
-        <template #append-inner>
-          <input
-            type="color"
-            :value="settings.seedColor"
-            class="seed-swatch"
-            @input="onSeedInput(($event.target as HTMLInputElement).value)"
-          />
-        </template>
-      </v-text-field>
+    <div v-if="store.carsByPosition.length === 0" class="empty-state">
+      <p>{{ strings.emptyNoCarsHint }}</p>
+      <v-btn color="primary" variant="flat" @click="addCarDialogOpen = true">
+        {{ strings.addCar }}
+      </v-btn>
+      <v-btn variant="tonal" @click="store.showSnackbar(strings.comingInSubtask6)">
+        {{ strings.importEntries }}
+      </v-btn>
+    </div>
+    <div v-else class="placeholder">
+      <p>{{ strings.entriesPlaceholder }}</p>
     </div>
   </v-main>
+
+  <CarDialog v-model="addCarDialogOpen" :car="null" />
 </template>
 
 <style scoped>
-.drawer-title {
-  font-size: var(--sv-font-drawer-title);
-  font-weight: var(--sv-font-weight-regular);
-  padding: 16px;
-}
-
-.placeholder {
+.empty-state {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 24px;
+  gap: 16px;
   padding: 24px var(--sv-page-padding-x);
-}
-
-.placeholder-text {
   font-size: var(--sv-font-list-item);
 }
 
-.seed-field {
-  width: 260px;
-}
-
-.seed-swatch {
-  width: 28px;
-  height: 28px;
-  padding: 0;
-  border: none;
-  background: none;
-  cursor: pointer;
+.placeholder {
+  padding: 24px var(--sv-page-padding-x);
+  font-size: var(--sv-font-list-item);
+  color: rgb(var(--v-theme-on-surface-variant));
 }
 </style>

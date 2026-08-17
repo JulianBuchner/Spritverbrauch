@@ -2,6 +2,15 @@ import { argbFromHex, hexFromArgb, themeFromSourceColor } from '@material/materi
 import type { Scheme, TonalPalette } from '@material/material-color-utilities'
 import type { ThemeDefinition } from 'vuetify'
 
+// Default seed per SPEC.md section 5, used before the database is loaded.
+export const DEFAULT_SEED_COLOR = '#3159BD'
+
+// Keeps the browser/status bar in sync with the current palette.
+export function setMetaThemeColor(color: string): void {
+  const meta = document.querySelector('meta[name="theme-color"]')
+  if (meta) meta.setAttribute('content', color)
+}
+
 /**
  * Builds the Vuetify light and dark themes from a single seed color,
  * mapping the Material 3 color roles listed in SPEC.md section 10.

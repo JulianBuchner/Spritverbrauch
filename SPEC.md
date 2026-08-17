@@ -44,10 +44,11 @@ auf Vorrat anlegen**.
 
 ### Warum keine Datenbank
 
-Der gesamte Datensatz sind derzeit 72 Einträge, ca. 20 KB, und wächst um ~30 Einträge pro Jahr.
+Der gesamte Datensatz sind derzeit 71 Einträge, ca. 20 KB, und wächst um ~30 Einträge pro Jahr.
 Es gibt **kein** Repository-Interface, **keine** Migrations, **keine** Queries. Beim Start wird
 das ganze Dokument gelesen, alles liegt im Pinia-Store, jede Statistik ist eine pure Funktion
-über ein Array. Geschrieben wird das ganze Dokument bei jeder Änderung (debounced, 300 ms).
+über ein Array. Geschrieben wird immer das ganze Dokument; die Schreibregeln stehen in
+Abschnitt 5.
 
 ---
 
@@ -134,6 +135,19 @@ Beim ersten Start ohne Daten: leerer Zustand mit `cars: []`, `entries: []`, Defa
 (`themeMode: 'system'`, `seedColor: '#3159BD'`). Die Einträge-Ansicht zeigt dann einen
 Empty State mit Hinweis auf „Auto hinzufügen" und „Einträge importieren".
 
+**Schreibregeln.** Änderungen an `cars` und `entries` werden **sofort** geschrieben. Nur
+Änderungen an `settings` sind mit 300 ms debounced, weil der Farbwähler hochfrequent feuert.
+Ein noch offener Debounce wird bei `pagehide` und bei `document.hidden` entleert.
+
+Der Grund für die Unterscheidung: ein Debounce über allen Schreibvorgängen öffnet ein
+Datenverlustfenster von 300 ms. Wer einen Eintrag anlegt und die App unmittelbar danach
+wegwischt, verliert ihn. Fahrzeug- und Eintragsänderungen sind seltene, bewusste Aktionen und
+brauchen kein Debouncing.
+
+Der Store übergibt einen reaktiven Pinia-Proxy, den der Structured-Clone-Algorithmus von
+IndexedDB ablehnt. `Database` ist reine JSON-Daten, deshalb ist ein JSON-Round-Trip vor dem
+Schreiben der korrekte Weg zu einem einfachen Objekt.
+
 Alle Schreibvorgänge in `try/catch`. Bei Fehler eine Snackbar mit klarer Meldung — **nie**
 stillschweigend verwerfen.
 
@@ -196,8 +210,9 @@ Import **ersetzt** den gesamten Datenbestand. Vorher ein Bestätigungsdialog mit
 der Fahrzeuge und Einträge, die importiert werden, und dem Hinweis, dass die aktuellen Daten
 verloren gehen.
 
-Danach ein Ergebnisdialog: „72 Einträge importiert, 4 davon nicht in die Durchschnitte
-einbezogen (fehlende km, Liter oder Preis)."
+Danach ein Ergebnisdialog mit den echten Zahlen aus `ImportResult.stats`. Für den
+Referenz-Fixture also: „71 Einträge und 2 Fahrzeuge importiert. 3 Einträge sind nicht in die
+Durchschnitte einbezogen, weil km, Liter oder Preis fehlen."
 
 Keine Duplikaterkennung, kein Zusammenführen.
 
@@ -277,8 +292,13 @@ kein Zapfsäulenpreis.
 Referenz-App und wird bewusst übernommen. Der fehlende Tausendertrenner der Referenz-App
 wird dagegen korrigiert.
 
+**Der Tausendertrenner ist bewusst der Punkt.** CLDR gibt `de-AT` einen geschützten Leerraum
+als Gruppentrenner; er wird über `formatToParts` auf `.` abgebildet. Das ist eine gewollte
+Abweichung von CLDR, kein Versehen.
+
 Datum: `d. MMMM` im laufenden Jahr, sonst `d. MMMM yyyy`. Beispiele: `17. August`,
-`8. Juni 2020`. Deutsche Monatsnamen.
+`8. Juni 2020`. Monatsnamen stammen aus `de-AT` — Januar heißt damit **Jänner**, nicht Januar.
+Das ist österreichisches Deutsch und so gewollt.
 
 ---
 
@@ -455,12 +475,18 @@ Rollenzuordnung im UI:
 |---|---|
 | Seitenhintergrund | `background` |
 | Eintragskarte | `surface-container-high` |
-| Zahlen | `on-surface` |
+| Kennzahl-Werte | `on-surface` |
+| Kennzahl-Einheiten | `on-surface`, identisch zum Wert, nur halb so groß |
 | Datum, `Insgesamt:` | `primary` |
 | aktives Fahrzeug im Drawer, `Heute`-Button | `secondary-container` |
 | FAB, Auto-Icon-Fläche | `primary-container` |
 | `Bestätigen` | `primary` gefüllt |
-| Einheiten, Marker-Icon, Stichprobenhinweis | `on-surface-variant` |
+| Marker-Icon, Stichprobenhinweis, Feldlabels | `on-surface-variant` |
+| `<meta name="theme-color">` | `surface` der aktuell wirksamen Palette |
+
+Die Einheiten sind **nicht** abgedunkelt. An `docs/reference/main_window.jpeg` nachgemessen:
+der Wert `26652` erreicht `#FFFBFF`, die Einheit `km` erreicht `#FFF7FB` — der Unterschied ist
+Antialiasing an kleineren Glyphen, kein anderes Farbtoken.
 
 ### Gemessene Referenzwerte
 
@@ -506,13 +532,19 @@ gemeinsame Grundlinie.
 Props:  value: number | null
         unit: string
         format: 'km' | 'liters' | 'money' | 'lPer100' | 'centsPer100' | 'centsPerLiter'
-        size?: 'md' | 'lg'
 Render: <span class="mv"><span class="mv-val">5,45</span><span class="mv-unit">l/100km</span></span>
         value === null  ->  '–' und die Einheit trotzdem anzeigen
 ```
 
 `display: inline-flex; align-items: baseline`. Kein Leerzeichen, kein Margin zwischen den
 beiden Spans.
+
+**Es gibt nur eine Größe.** In der Referenz-App sind die Kennzahlen in der Insgesamt-Zeile und
+in den Eintragskarten gleich groß (gemessene Ziffernhöhe 13,9 dp gegen 13,2 dp, also beides
+~20 px). Keine `size`-Prop.
+
+Wert und Einheit haben **dieselbe** Farbe (`on-surface`), sie unterscheiden sich nur in der
+Schriftgröße: 20 px zu 11 px.
 
 Darauf baut `MetricGrid` auf: `display: grid; grid-template-columns: repeat(3, 1fr)`,
 linksbündig, Zeilenabstand 4 px.

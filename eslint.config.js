@@ -12,6 +12,9 @@ export default tseslint.config(
     files: ['**/*.vue'],
     languageOptions: {
       parserOptions: { parser: tseslint.parser },
+      // no-undef stays active in .vue files (unlike .ts, where
+      // typescript-eslint turns it off), so browser globals are needed.
+      globals: { window: 'readonly', document: 'readonly' },
     },
   },
   {

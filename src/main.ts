@@ -10,8 +10,7 @@ import * as directives from 'vuetify/directives'
 
 import App from './App.vue'
 import { router } from './router'
-import { buildVuetifyThemes } from './theme'
-import { DEFAULT_SEED_COLOR } from './store/settings'
+import { buildVuetifyThemes, DEFAULT_SEED_COLOR } from './theme'
 
 const { light, dark } = buildVuetifyThemes(DEFAULT_SEED_COLOR)
 

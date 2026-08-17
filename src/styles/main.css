@@ -18,6 +18,11 @@
   --sv-font-weight-medium: 500;
 }
 
+/* AppBar title size per SPEC.md section 10 (class set on v-app-bar-title). */
+.appbar-title {
+  font-size: var(--sv-font-appbar-title);
+}
+
 /* Roboto or an equivalent system font; only weights 400 and 500 are used. */
 html {
   font-family:
