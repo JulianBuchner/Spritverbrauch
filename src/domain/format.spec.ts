@@ -7,6 +7,7 @@ import {
   formatLPer100,
   formatLiters,
   formatMoney,
+  formatTimestamp,
   localCalendarDate,
   todayLocalDate,
 } from './format'
@@ -81,6 +82,18 @@ describe('localCalendarDate (TZ=Europe/Vienna)', () => {
 
   it('pads month and day to two digits', () => {
     expect(localCalendarDate(new Date(2026, 0, 5))).toBe('2026-01-05')
+  })
+})
+
+describe('formatTimestamp (TZ=Europe/Vienna)', () => {
+  it('formats an ISO timestamp as local date and time', () => {
+    // 12:30 UTC in summer is 14:30 in Vienna (CEST)
+    expect(formatTimestamp('2026-08-17T12:30:00.000Z')).toBe('17. August 2026, 14:30')
+  })
+
+  it('uses Jänner and the local calendar day across midnight', () => {
+    // 23:30 UTC on Jan 5 is already Jan 6, 00:30 in Vienna (CET)
+    expect(formatTimestamp('2026-01-05T23:30:00.000Z')).toBe('6. Jänner 2026, 00:30')
   })
 })
 

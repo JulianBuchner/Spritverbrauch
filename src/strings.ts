@@ -11,7 +11,6 @@ export const strings = {
   settings: 'Einstellungen',
   exportEntries: 'Einträge exportieren',
   importEntries: 'Einträge importieren',
-  comingInSubtask6: 'Kommt in Subtask 6',
 
   // Car dialog and car management
   editCar: 'Fahrzeug bearbeiten',
@@ -93,4 +92,34 @@ export const strings = {
   carCount: 'Fahrzeuge',
   entryCount: 'Einträge',
   backupHint: 'Die Daten liegen nur in diesem Browser — der Export ist das einzige Backup.',
+  lastExported: (formatted: string) => `Zuletzt exportiert: ${formatted}.`,
+  neverExported: 'Noch nie exportiert.',
+
+  // Export and import
+  importFormatOwn: 'eigenes Backup',
+  importFormatReference: 'Spritverbrauch-Export',
+  importConfirmTitle: 'Einträge importieren?',
+  importConfirmFormat: (format: string) => `Erkanntes Format: ${format}`,
+  importConfirmCounts: (cars: number, entries: number) => {
+    const carsPart = cars === 1 ? '1 Fahrzeug' : `${cars} Fahrzeuge`
+    const entriesPart = entries === 1 ? '1 Eintrag' : `${entries} Einträge`
+    return `${carsPart}, ${entriesPart}`
+  },
+  importConfirmWarning: 'Die aktuellen Daten werden dabei vollständig ersetzt.',
+  importAction: 'Importieren',
+  importResultTitle: 'Import abgeschlossen',
+  importResultMessage: (entries: number, cars: number) => {
+    const entriesPart = entries === 1 ? '1 Eintrag' : `${entries} Einträge`
+    const carsPart = cars === 1 ? '1 Fahrzeug' : `${cars} Fahrzeuge`
+    return `${entriesPart} und ${carsPart} importiert.`
+  },
+  importResultExcluded: (excluded: number) =>
+    excluded === 1
+      ? '1 Eintrag ist nicht in die Durchschnitte einbezogen, weil km, Liter oder Preis fehlen.'
+      : `${excluded} Einträge sind nicht in die Durchschnitte einbezogen, weil km, Liter oder Preis fehlen.`,
+  importErrorTitle: 'Import nicht möglich',
+  importReadError: 'Die Datei konnte nicht gelesen werden oder enthält kein gültiges JSON.',
+  importUnknownError: 'Die Datei konnte nicht importiert werden.',
+  view: 'Ansehen',
+  ok: 'OK',
 } as const

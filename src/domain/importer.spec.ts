@@ -234,6 +234,23 @@ describe('empty data sets (SPEC 12.3)', () => {
   })
 })
 
+describe('own-format backup with the optional lastExportedAt settings field', () => {
+  // The importer is unchanged in subtask 6: it only reads themeMode and
+  // seedColor, so the stamp of the exporting installation is not carried
+  // over — the freshly imported dataset has never been exported.
+  it('imports cleanly and does not carry the stamp over', () => {
+    const db = createEmptyDatabase()
+    const withStamp = {
+      ...db,
+      settings: { ...db.settings, lastExportedAt: '2026-08-17T12:30:00.000Z' },
+    }
+    const { database, stats } = importBackup(withStamp)
+    expect(stats).toEqual({ cars: 0, entries: 0, excluded: 0 })
+    expect(database.settings.themeMode).toBe('system')
+    expect(database.settings.lastExportedAt).toBeUndefined()
+  })
+})
+
 describe('invalid input throws a UI-displayable error (SPEC 6, prompt 01)', () => {
   it.each([null, undefined, 42, 'text', []])('rejects %j', (raw) => {
     expect(() => importBackup(raw)).toThrow()

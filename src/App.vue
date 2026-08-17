@@ -6,6 +6,7 @@ import { flushPendingSave } from './persistence/db'
 import { buildVuetifyThemes, setMetaThemeColor } from './theme'
 import AppDrawer from './components/AppDrawer.vue'
 import AppSnackbar from './components/AppSnackbar.vue'
+import BackupDialogs from './components/BackupDialogs.vue'
 
 const store = useAppStore()
 const theme = useTheme()
@@ -50,6 +51,7 @@ watchEffect(() => {
     <template v-if="store.loaded">
       <AppDrawer />
       <router-view />
+      <BackupDialogs />
     </template>
     <AppSnackbar />
   </v-app>

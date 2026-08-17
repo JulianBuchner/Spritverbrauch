@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { todayLocalDate } from '../domain/format'
 import { sortEntriesForDisplay } from '../domain/stats'
 import { useAppStore } from '../store/app'
+import { useBackup } from '../composables/useBackup'
 import { strings } from '../strings'
 import CarDialog from '../components/CarDialog.vue'
 import EntryCard from '../components/EntryCard.vue'
@@ -13,6 +14,7 @@ import TotalsHeader from '../components/TotalsHeader.vue'
 // by date descending, and the FAB leading to the entry form.
 const store = useAppStore()
 const router = useRouter()
+const { startImport } = useBackup()
 const addCarDialogOpen = ref(false)
 
 const activeEntries = computed(() =>
@@ -43,7 +45,7 @@ onUnmounted(() => window.clearInterval(todayTimer))
       <v-btn color="primary" variant="flat" @click="addCarDialogOpen = true">
         {{ strings.addCar }}
       </v-btn>
-      <v-btn variant="tonal" @click="store.showSnackbar(strings.comingInSubtask6)">
+      <v-btn variant="tonal" @click="startImport">
         {{ strings.importEntries }}
       </v-btn>
     </div>

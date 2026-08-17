@@ -1,13 +1,26 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { formatTimestamp } from '../domain/format'
 import { useAppStore } from '../store/app'
+import { useBackup } from '../composables/useBackup'
 import { strings } from '../strings'
 import pkg from '../../package.json'
 
 // Settings per SPEC.md section 9.7: app version, car and entry counts,
-// links to export and import. No empty placeholders.
+// links to export and import, plus the backup hint. No empty placeholders.
 const store = useAppStore()
 const router = useRouter()
+const { startExport, startImport } = useBackup()
+
+const lastExportText = computed(() => {
+  const iso = store.settings.lastExportedAt
+  return iso ? strings.lastExported(formatTimestamp(iso)) : strings.neverExported
+})
+
+function exportEntries() {
+  void startExport()
+}
 </script>
 
 <template>
@@ -35,15 +48,16 @@ const router = useRouter()
 
       <v-divider class="my-2" />
 
-      <v-list-item @click="store.showSnackbar(strings.comingInSubtask6)">
+      <p class="backup-hint">{{ strings.backupHint }} {{ lastExportText }}</p>
+
+      <v-list-item @click="exportEntries">
         <template #prepend>
           <v-icon icon="mdi-upload" />
         </template>
         <v-list-item-title>{{ strings.exportEntries }}</v-list-item-title>
-        <v-list-item-subtitle class="backup-hint">{{ strings.backupHint }}</v-list-item-subtitle>
       </v-list-item>
 
-      <v-list-item @click="store.showSnackbar(strings.comingInSubtask6)">
+      <v-list-item @click="startImport">
         <template #prepend>
           <v-icon icon="mdi-download" />
         </template>
@@ -60,7 +74,8 @@ const router = useRouter()
 }
 
 .backup-hint {
+  padding: 4px 16px 8px;
   font-size: var(--sv-font-label);
-  white-space: normal;
+  color: rgb(var(--v-theme-on-surface-variant));
 }
 </style>

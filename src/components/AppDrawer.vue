@@ -2,12 +2,14 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAppStore } from '../store/app'
+import { useBackup } from '../composables/useBackup'
 import { strings } from '../strings'
 import CarDialog from './CarDialog.vue'
 
 // Temporary (overlaying) navigation drawer per SPEC.md section 9.1.
 const store = useAppStore()
 const router = useRouter()
+const { startExport, startImport } = useBackup()
 
 const addCarDialogOpen = ref(false)
 
@@ -26,9 +28,14 @@ function openAddCar() {
   addCarDialogOpen.value = true
 }
 
-function notYetImplemented() {
+function exportEntries() {
   store.drawerOpen = false
-  store.showSnackbar(strings.comingInSubtask6)
+  void startExport()
+}
+
+function importEntries() {
+  store.drawerOpen = false
+  startImport()
 }
 </script>
 
@@ -93,14 +100,14 @@ function notYetImplemented() {
         <v-list-item-title class="drawer-item-text">{{ strings.settings }}</v-list-item-title>
       </v-list-item>
 
-      <v-list-item rounded="pill" @click="notYetImplemented">
+      <v-list-item rounded="pill" @click="exportEntries">
         <template #prepend>
           <v-icon icon="mdi-upload" />
         </template>
         <v-list-item-title class="drawer-item-text">{{ strings.exportEntries }}</v-list-item-title>
       </v-list-item>
 
-      <v-list-item rounded="pill" @click="notYetImplemented">
+      <v-list-item rounded="pill" @click="importEntries">
         <template #prepend>
           <v-icon icon="mdi-download" />
         </template>

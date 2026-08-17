@@ -204,6 +204,14 @@ export const useAppStore = defineStore('app', {
       this.persistNow()
     },
 
+    // Stamps the export time. Written immediately: exporting is a rare,
+    // deliberate action, not the high-frequency color-picker path the
+    // settings debounce exists for.
+    markExported(timestamp: string) {
+      this.database.settings.lastExportedAt = timestamp
+      this.persistNow()
+    },
+
     setThemeMode(mode: Settings['themeMode']) {
       this.database.settings.themeMode = mode
       this.persistSettings()

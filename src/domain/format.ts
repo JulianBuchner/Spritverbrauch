@@ -61,6 +61,21 @@ export function todayLocalDate(): string {
   return localCalendarDate(new Date())
 }
 
+const timestampDateFormat = new Intl.DateTimeFormat('de-AT', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+})
+const timestampTimeFormat = new Intl.DateTimeFormat('de-AT', { hour: '2-digit', minute: '2-digit' })
+
+// ISO-8601 timestamp as local date and time, e.g. '17. August 2026, 14:32'.
+// Date and time are formatted separately and joined with ', ' so the output
+// does not depend on the ICU glue pattern ('um').
+export function formatTimestamp(iso: string): string {
+  const date = new Date(iso)
+  return `${timestampDateFormat.format(date)}, ${timestampTimeFormat.format(date)}`
+}
+
 const dateFormat = new Intl.DateTimeFormat('de-AT', { day: 'numeric', month: 'long' })
 const dateFormatWithYear = new Intl.DateTimeFormat('de-AT', {
   day: 'numeric',

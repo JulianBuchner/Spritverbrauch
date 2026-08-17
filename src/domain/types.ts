@@ -20,6 +20,7 @@ export interface Entry {
 export interface Settings {
   themeMode: 'light' | 'dark' | 'system'
   seedColor: string // '#RRGGBB'
+  lastExportedAt?: string // ISO-8601, absent until the first export; additive, version stays 1
 }
 
 export interface Database {
