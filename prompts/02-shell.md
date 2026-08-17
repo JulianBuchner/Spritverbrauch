@@ -52,6 +52,10 @@ Wie `SPEC.md` 9.6. Modus als `v-btn-toggle`, Seed-Farbe über Picker plus die zw
 Änderungen greifen sofort und werden persistiert. Vorschau: eine Beispiel-Eintragskarte mit
 statischen Zahlen.
 
+Ein Wechsel der Seed-Farbe oder des Modus aktualisiert zusätzlich das
+<meta name="theme-color"> im Dokument auf die aktuelle primary- bzw.
+surface-Farbe, damit die Browser- und Statusleiste mitgeht.
+
 ### 7. Einstellungen
 
 Wie `SPEC.md` 9.7 — App-Version, Anzahl Fahrzeuge und Einträge, Links zu Export und Import.
