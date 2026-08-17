@@ -1,0 +1,30 @@
+/* Geometry and typography tokens from SPEC.md section 10. */
+:root {
+  --sv-page-padding-x: 8px;
+  --sv-card-radius: 12px;
+  --sv-card-padding: 12px 14px;
+  --sv-card-gap: 12px;
+  --sv-field-radius: 4px;
+  --sv-fab-size: 56px;
+  --sv-fab-radius: 16px;
+  --sv-font-appbar-title: 22px;
+  --sv-font-drawer-title: 28px;
+  --sv-font-metric-value: 20px;
+  --sv-font-metric-unit: 11px;
+  --sv-font-card-date: 16px;
+  --sv-font-list-item: 16px;
+  --sv-font-label: 12px;
+  --sv-font-weight-regular: 400;
+  --sv-font-weight-medium: 500;
+}
+
+/* Roboto or an equivalent system font; only weights 400 and 500 are used. */
+html {
+  font-family:
+    Roboto,
+    'Segoe UI',
+    system-ui,
+    -apple-system,
+    sans-serif;
+  font-weight: var(--sv-font-weight-regular);
+}

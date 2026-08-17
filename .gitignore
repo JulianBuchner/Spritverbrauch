@@ -1,3 +1,7 @@
+# Screenshots einer fremden App - bleiben lokal
 docs/reference
-src/domain/__fixtures__
-prompts/
+
+node_modules/
+dist/
+dev-dist/
+*.local

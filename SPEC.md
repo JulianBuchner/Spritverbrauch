@@ -577,7 +577,11 @@ keine Mehrfachauswahl für die 500er gebaut.
 - €/l dreistellig: der Eintrag `268 km / 15,01 l / 30,00 €` ergibt `1,999 €/l`, nicht `2,00`.
 - Division durch Null gibt `null`, nie `Infinity` oder `NaN`. Der Eintrag `0/0/45` liefert für
   alle drei abgeleiteten Kennzahlen `null`.
-- Zeitzone: `date: 1591574400000` → `'2020-06-08'` in `Europe/Vienna`.
+- Zeitzone: ein synthetischer Eintrag mit `date: 1591659000000` (= 08.06.2020 23:30 UTC)
+  ergibt in `Europe/Vienna` das Tagesdatum `'2020-06-09'`, nicht `'2020-06-08'`.
+  Zweiter Fall über die Jahresgrenze: `1609459140000` → `'2021-01-01'`, nicht `'2020-12-31'`.
+  Beide Fälle nicht aus der Fixture nehmen — dort gibt es keinen Eintrag, bei dem sich
+  UTC- und Lokaldatum unterscheiden.
 - Sortierung: ein Eintrag mit altem Datum landet chronologisch, nicht oben.
 - `isDefault` nach dem Import ist **Golf 7** (jüngster Eintrag), nicht Golf 5
   (`position: 0`).
