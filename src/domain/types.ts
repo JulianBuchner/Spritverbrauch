@@ -29,3 +29,13 @@ export interface Database {
   cars: Car[]
   entries: Entry[]
 }
+
+export function createEmptyDatabase(): Database {
+  return {
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    settings: { themeMode: 'system', seedColor: '#3159BD' },
+    cars: [],
+    entries: [],
+  }
+}

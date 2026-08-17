@@ -586,6 +586,8 @@ keine Mehrfachauswahl für die 500er gebaut.
 - `isDefault` nach dem Import ist **Golf 7** (jüngster Eintrag), nicht Golf 5
   (`position: 0`).
 - Leerer Datenbestand: alle Statistiken `null`, kein Absturz.
+- Monatsname Januar: `formatEntryDate('2023-01-19', '2026-08-17')` ergibt
+  `'19. Jänner 2023'` (österreichisches Deutsch, nicht `'19. Januar 2023'`).
 
 ---
 
@@ -613,3 +615,7 @@ GitHub Pages, öffentliches Repo. Zu beachten:
 - Jede Funktion in `src/domain/` ist pure und hat einen Test.
 - Vor jedem Abschluss eines Subtasks: `npm run lint && npm run typecheck && npm run test`
   müssen grün sein.
+
+Ausnahme: Fehlermeldungen aus `src/domain/` werden dort definiert, weil dieses
+Verzeichnis nichts aus dem Rest von `src/` importieren darf. `src/strings.ts`
+enthält alle übrigen UI-Texte.
