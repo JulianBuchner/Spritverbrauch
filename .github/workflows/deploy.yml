@@ -30,20 +30,9 @@ jobs:
       - run: npm run typecheck
       - run: npm run test
       - run: npm run build
+      # One-time prerequisite: Settings -> Pages -> Source must be set to
+      # "GitHub Actions", otherwise the branch build overwrites this deploy.
       - uses: actions/configure-pages@v5
-        with:
-          # Creates the Pages site on first run instead of requiring
-          # a manual Settings -> Pages setup.
-          enablement: true
-      - name: Ensure Pages builds from this workflow, not from the branch
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          curl -sf -X PUT \
-            -H "Authorization: Bearer $GH_TOKEN" \
-            -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/${{ github.repository }}/pages" \
-            -d '{"build_type":"workflow"}'
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
