@@ -63,3 +63,7 @@ Zum Prüfen kannst du `src/domain/__fixtures__/backup-reference.json` über eine
 Dev-Funktion in den Store laden. Diese Funktion darf im Produktionsbuild nicht erreichbar sein.
 
 Halte dich an das Meldeformat aus `CLAUDE.md`.
+
+AppSnackbar und die Snackbar-Queue im Store werden um eine optionale Aktion
+(Label + Callback) und eine Timeout-Angabe erweitert. Die Undo-Snackbar beim
+Löschen nutzt diese Erweiterung, kein zweiter Mechanismus daneben.
