@@ -4,12 +4,16 @@ import CarsView from '../views/CarsView.vue'
 import GraphView from '../views/GraphView.vue'
 import AppearanceView from '../views/AppearanceView.vue'
 import SettingsView from '../views/SettingsView.vue'
+import EntryFormView from '../views/EntryFormView.vue'
 
 // Hash mode so GitHub Pages needs no 404 fallback (SPEC.md section 13).
 export const router = createRouter({
   history: createWebHashHistory(),
   routes: [
     { path: '/', name: 'home', component: HomeView },
+    // Placeholder targets until subtask 4 delivers the entry form.
+    { path: '/entry/new', name: 'entry-new', component: EntryFormView },
+    { path: '/entry/:id', name: 'entry-edit', component: EntryFormView },
     { path: '/cars', name: 'cars', component: CarsView },
     { path: '/graph', name: 'graph', component: GraphView },
     { path: '/appearance', name: 'appearance', component: AppearanceView },

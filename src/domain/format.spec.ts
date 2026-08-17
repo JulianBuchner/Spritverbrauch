@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
   formatCentsPer100,
   formatCentsPerLiter,
@@ -7,6 +7,8 @@ import {
   formatLPer100,
   formatLiters,
   formatMoney,
+  localCalendarDate,
+  todayLocalDate,
 } from './format'
 
 // Examples straight from SPEC.md section 8.
@@ -66,5 +68,31 @@ describe('formatEntryDate (SPEC 8)', () => {
 
   it('uses the Austrian month name Jänner, not Januar (SPEC 12.3)', () => {
     expect(formatEntryDate('2023-01-19', '2026-08-17')).toBe('19. Jänner 2023')
+  })
+})
+
+describe('localCalendarDate (TZ=Europe/Vienna)', () => {
+  it('uses the local calendar date, not the UTC date (SPEC 12.3 cases)', () => {
+    // 2020-06-08 23:30 UTC is already 2020-06-09 in Vienna
+    expect(localCalendarDate(new Date(1591659000000))).toBe('2020-06-09')
+    // 2020-12-31 23:59 UTC is already 2021-01-01 in Vienna
+    expect(localCalendarDate(new Date(1609459140000))).toBe('2021-01-01')
+  })
+
+  it('pads month and day to two digits', () => {
+    expect(localCalendarDate(new Date(2026, 0, 5))).toBe('2026-01-05')
+  })
+})
+
+describe('todayLocalDate', () => {
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it('returns the current local calendar date as YYYY-MM-DD', () => {
+    vi.useFakeTimers()
+    // 2020-12-31 23:59 UTC → already 2021-01-01 in Vienna
+    vi.setSystemTime(new Date(1609459140000))
+    expect(todayLocalDate()).toBe('2021-01-01')
   })
 })

@@ -1,13 +1,22 @@
 import { defineStore } from 'pinia'
 import { createEmptyDatabase } from '../domain/types'
-import type { Car, Database, Settings } from '../domain/types'
+import type { Car, Database, Entry, Settings } from '../domain/types'
 import { loadDatabase, saveDatabase, saveDatabaseDebounced } from '../persistence/db'
 import { strings } from '../strings'
+
+export interface SnackbarAction {
+  label: string
+  onAction: () => void
+}
 
 export interface SnackbarMessage {
   id: number
   text: string
+  timeoutMs: number
+  action?: SnackbarAction
 }
+
+const DEFAULT_SNACKBAR_TIMEOUT_MS = 4000
 
 let nextSnackbarId = 1
 
@@ -77,8 +86,13 @@ export const useAppStore = defineStore('app', {
       saveDatabaseDebounced(this.database, () => this.showSnackbar(strings.saveError))
     },
 
-    showSnackbar(text: string) {
-      this.snackbarQueue.push({ id: nextSnackbarId++, text })
+    showSnackbar(text: string, options?: { timeoutMs?: number; action?: SnackbarAction }) {
+      this.snackbarQueue.push({
+        id: nextSnackbarId++,
+        text,
+        timeoutMs: options?.timeoutMs ?? DEFAULT_SNACKBAR_TIMEOUT_MS,
+        action: options?.action,
+      })
     },
 
     dismissSnackbar() {
@@ -141,6 +155,34 @@ export const useAppStore = defineStore('app', {
         .forEach((car, index) => {
           car.position = index
         })
+    },
+
+    // Deletes immediately, no confirmation dialog; the snackbar's undo action
+    // is the safety net (SPEC.md section 9.2). Restoring at the original
+    // array index keeps the display position, because the display sort is
+    // stable and only orders by date.
+    deleteEntry(entryId: string) {
+      const index = this.database.entries.findIndex((entry) => entry.id === entryId)
+      if (index === -1) return
+      const [removed] = this.database.entries.splice(index, 1)
+      this.persistNow()
+      this.showSnackbar(strings.entryDeleted, {
+        timeoutMs: 6000,
+        action: { label: strings.undo, onAction: () => this.restoreEntry(removed, index) },
+      })
+    },
+
+    restoreEntry(entry: Entry, index: number) {
+      const insertAt = Math.min(index, this.database.entries.length)
+      this.database.entries.splice(insertAt, 0, entry)
+      this.persistNow()
+    },
+
+    // Replaces the whole document (dev fixture loading now, import later).
+    replaceDatabase(database: Database) {
+      this.database = database
+      this.activeCarId = pickActiveCarId(database)
+      this.persistNow()
     },
 
     setThemeMode(mode: Settings['themeMode']) {

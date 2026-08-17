@@ -353,9 +353,11 @@ l/100km         €/100km          €/l
 5,60 l/100km    11,19 €/100km    1,999 €/l
 ```
 
-Datum in der Akzentfarbe. `[Marker]` ist ein kleines `mdi-calculator-off-outline` in
+Datum in der Akzentfarbe. `[Marker]` ist ein kleines `mdi-minus-circle-outline` in
 `on-surface-variant`, nur wenn `countInStats === false`, mit Tooltip
-„Nicht in den Durchschnitten".
+„Nicht in den Durchschnitten". Bewusst kein Taschenrechner-Icon: MDI hat kein
+`calculator-off`, und ein Rechner ohne Negation liest sich als „wird gerechnet", also
+umgekehrt zur Bedeutung. Das Minus-Symbol trägt „aus der Menge entfernt".
 
 **Sortierung:** absteigend nach `date`. Stabile Sortierung, damit Einträge mit gleichem
 Datum ihre Reihenfolge behalten. Ein nachträglich eingefügter alter Eintrag erscheint an
@@ -515,6 +517,7 @@ Bordeaux-Theme, dunkel: `surface #1A1114`, `surfaceContainerHigh #23181C`,
 | Drawer-Titel | 28 px |
 | Kennzahl-Wert | 20 px, Regular |
 | Kennzahl-Einheit | 11 px, baseline-aligned, kein Leerzeichen davor |
+| `Insgesamt:`-Label | 16 px |
 | Kartendatum | 16 px |
 | Drawer- und Menüeinträge | 16 px |
 | Labels, Stichprobenhinweis | 12 px |

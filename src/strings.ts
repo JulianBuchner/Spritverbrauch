@@ -33,9 +33,18 @@ export const strings = {
   loadError: 'Daten konnten nicht geladen werden',
   saveError: 'Daten konnten nicht gespeichert werden',
 
-  // Home placeholder and empty state
-  entriesPlaceholder: 'Die Einträge-Ansicht folgt in Subtask 3.',
+  // Entries view
+  totalsLabel: 'Insgesamt:',
+  sampleHint: (included: number, total: number) => `Ø über ${included} von ${total} Einträgen`,
+  edit: 'Bearbeiten',
+  notInAverages: 'Nicht in den Durchschnitten',
+  entryDeleted: 'Eintrag gelöscht',
+  undo: 'Widerrufen',
+  emptyNoEntriesHint: 'Noch keine Einträge. Lege den ersten mit dem +-Knopf unten rechts an.',
+
+  // Placeholders and empty state
   graphPlaceholder: 'Der Graph folgt in einem späteren Subtask.',
+  entryFormPlaceholder: 'Das Eintragsformular folgt in Subtask 4.',
   emptyNoCarsHint: 'Noch kein Fahrzeug vorhanden.',
 
   // Appearance

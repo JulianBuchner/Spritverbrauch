@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { todayLocalDate } from '../domain/format'
+import type { Entry } from '../domain/types'
 import { useAppStore } from '../store/app'
 import { strings } from '../strings'
-import SampleEntryCard from '../components/SampleEntryCard.vue'
+import EntryCard from '../components/EntryCard.vue'
 
 // Theme selection per SPEC.md section 9.6: mode toggle, seed color picker
 // with two presets, and a live preview card. Changes apply immediately and
@@ -33,6 +35,21 @@ function onSeedInput(value: string) {
 }
 
 const seedRule = (value: string) => /^#[0-9a-fA-F]{6}$/.test(value) || strings.seedColorInvalid
+
+// The preview is the real EntryCard in preview mode, fed with the sample
+// values from SPEC.md section 9.2 — so preview and entry list cannot drift.
+const sampleEntry: Entry = {
+  id: 'sample',
+  carId: 'sample',
+  date: '2026-08-06',
+  tripKm: 268,
+  liters: 15.01,
+  costCents: 3000,
+  isFull: true,
+  countInStats: true,
+  note: '',
+}
+const today = todayLocalDate()
 </script>
 
 <template>
@@ -92,7 +109,7 @@ const seedRule = (value: string) => /^#[0-9a-fA-F]{6}$/.test(value) || strings.s
 
       <section>
         <p class="section-label">{{ strings.preview }}</p>
-        <SampleEntryCard />
+        <EntryCard :entry="sampleEntry" :today="today" preview />
       </section>
     </div>
   </v-main>

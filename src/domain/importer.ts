@@ -6,6 +6,7 @@
 // src/domain/ must not import from the rest of src/.
 import type { Car, Database, Entry, Settings } from './types'
 import { createEmptyDatabase } from './types'
+import { localCalendarDate } from './format'
 
 export type ImportResult = {
   database: Database
@@ -139,7 +140,7 @@ function importReferenceFormat(raw: Record<string, unknown>): ImportResult {
     return {
       id: crypto.randomUUID(),
       carId,
-      date: epochMsToLocalDate(dateMs),
+      date: localCalendarDate(new Date(dateMs)),
       tripKm,
       liters,
       costCents,
@@ -177,15 +178,6 @@ function parseReferenceCar(
     name: requireString(value.name, message),
     position: requireNumber(value.position, message),
   }
-}
-
-// Epoch ms to the calendar date in the device's timezone — no UTC truncation.
-function epochMsToLocalDate(ms: number): string {
-  const date = new Date(ms)
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  return `${year}-${month}-${day}`
 }
 
 // --- validation helpers ------------------------------------------------------

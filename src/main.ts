@@ -25,3 +25,9 @@ const vuetify = createVuetify({
 })
 
 createApp(App).use(createPinia()).use(router).use(vuetify).mount('#app')
+
+// Dev-only console helper to load the reference fixture; the guard makes
+// Vite drop the whole module from the production build.
+if (import.meta.env.DEV) {
+  void import('./dev/loadReferenceFixture')
+}
