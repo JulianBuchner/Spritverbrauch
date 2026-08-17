@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { createEmptyDatabase } from '../domain/types'
 import type { Car, Database, Entry, Settings } from '../domain/types'
+import type { GraphMetric } from '../domain/graph'
 import { loadDatabase, saveDatabase, saveDatabaseDebounced } from '../persistence/db'
 import { strings } from '../strings'
 
@@ -45,6 +46,8 @@ export const useAppStore = defineStore('app', {
     database: createEmptyDatabase(),
     loaded: false,
     activeCarId: null as string | null,
+    // Session-only graph metric selection; deliberately not persisted.
+    graphMetric: 'tripKm' as GraphMetric,
     drawerOpen: false,
     snackbarQueue: [] as SnackbarMessage[],
   }),
@@ -101,6 +104,10 @@ export const useAppStore = defineStore('app', {
 
     setActiveCar(carId: string) {
       this.activeCarId = carId
+    },
+
+    setGraphMetric(metric: GraphMetric) {
+      this.graphMetric = metric
     },
 
     addCar(name: string, isDefault: boolean) {

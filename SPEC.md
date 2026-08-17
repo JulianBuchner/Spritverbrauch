@@ -35,7 +35,7 @@ auf Vorrat anlegen**.
 | Farbpalette | `@material/material-color-utilities`, zur Laufzeit aus Seed generiert |
 | State | Pinia |
 | Persistenz | `idb-keyval` — **ein** JSON-Dokument in IndexedDB |
-| Charts | Chart.js (`vue-chartjs` optional) |
+| Charts | Chart.js, mit `chartjs-adapter-date-fns` + `date-fns` für die Zeitskala |
 | Icons | `@mdi/font` (Vuetify-Default) |
 | PWA | `vite-plugin-pwa` |
 | Tests | Vitest |

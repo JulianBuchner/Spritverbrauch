@@ -43,8 +43,16 @@ export const strings = {
   emptyNoEntriesHint: 'Noch keine Einträge. Lege den ersten mit dem +-Knopf unten rechts an.',
 
   // Placeholders and empty state
-  graphPlaceholder: 'Der Graph folgt in einem späteren Subtask.',
   emptyNoCarsHint: 'Noch kein Fahrzeug vorhanden.',
+
+  // Graph
+  metricTripKm: 'Gefahrene KM',
+  metricLiters: 'Getankte Liter',
+  metricCost: 'Bezahlter Preis',
+  metricConsumption: 'Verbrauch',
+  metricCostPer100Km: 'Kosten pro 100km',
+  metricCostPerLiter: 'Kosten pro Liter',
+  graphEmptyHint: 'Zu wenige Einträge für ein Diagramm — es braucht mindestens zwei Datenpunkte.',
 
   // Entry form
   entryFormTitleNew: 'Eintrag hinzufügen',
