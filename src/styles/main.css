@@ -19,8 +19,12 @@
   --sv-font-weight-medium: 500;
 }
 
+/* The global overrides below repeat their class to outrank Vuetify's
+   single-class rules regardless of stylesheet order, which differs between
+   dev (injected per component) and the production build (vendor chunk CSS). */
+
 /* AppBar title size per SPEC.md section 10 (class set on v-app-bar-title). */
-.appbar-title {
+.appbar-title.appbar-title {
   font-size: var(--sv-font-appbar-title);
 }
 
@@ -28,7 +32,7 @@
    uppercase default. Vuetify's 0.0892857143em letter spacing is a Material 2
    value meant for all-caps labels; M3 labelLarge uses practically normal
    tracking (SPEC.md section 10). */
-.v-btn {
+.v-btn.v-btn {
   text-transform: none;
   letter-spacing: normal;
 }

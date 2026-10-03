@@ -16,6 +16,14 @@ export default defineConfig({
     vuetify({ autoImport: true }),
     VitePWA({
       registerType: 'autoUpdate',
+      workbox: {
+        // Default patterns plus the MDI icon font, so icons render on an
+        // offline cold start. woff2 only: every target browser picks it first.
+        globPatterns: ['**/*.{js,css,html,woff2}'],
+        // The MDI stylesheet requests the font as `...woff2?v=7.4.47`; ignore
+        // `v` (next to Workbox's defaults) so that request hits the precache.
+        ignoreURLParametersMatching: [/^utm_/, /^fbclid$/, /^v$/],
+      },
       manifest: {
         name: 'Spritverbrauch',
         short_name: 'Spritverbrauch',
