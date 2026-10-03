@@ -33,6 +33,28 @@ export default defineConfig({
       },
     }),
   ],
+  build: {
+    rolldownOptions: {
+      output: {
+        // Libraries in their own chunks: their content hashes stay stable
+        // across app deploys, so the service worker re-fetches only the
+        // changed app chunk.
+        codeSplitting: {
+          groups: [
+            { name: 'vuetify', test: /[\\/]node_modules[\\/]vuetify[\\/]/ },
+            {
+              name: 'chart',
+              test: /[\\/]node_modules[\\/](chart\.js|chartjs-adapter-date-fns|date-fns|@kurkle[\\/]color)[\\/]/,
+            },
+            {
+              name: 'material-color',
+              test: /[\\/]node_modules[\\/]@material[\\/]material-color-utilities[\\/]/,
+            },
+          ],
+        },
+      },
+    },
+  },
   test: {
     environment: 'node',
     include: ['src/**/*.spec.ts'],

@@ -27,6 +27,10 @@ const vuetify = createVuetify({
 
 createApp(App).use(createPinia()).use(router).use(vuetify).mount('#app')
 
+// Ask the browser not to evict IndexedDB under storage pressure — it holds
+// the only copy of the data. The answer does not change anything here.
+navigator.storage?.persist?.().catch(() => {})
+
 // Dev-only console helper to load the reference fixture; the guard makes
 // Vite drop the whole module from the production build.
 if (import.meta.env.DEV) {
