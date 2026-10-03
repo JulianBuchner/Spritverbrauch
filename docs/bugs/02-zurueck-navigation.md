@@ -1,6 +1,6 @@
 # 02 — Zurück-Taste durchläuft den gesamten Verlauf
 
-**Status:** entschieden, Behebung in v1 (Bugfix)
+**Status:** behoben
 **Gefunden:** Alltagsnutzung, Oktober 2026
 **Betrifft:** `src/components/AppDrawer.vue`, alle Views mit Zurück-Pfeil,
 `src/views/EntryFormView.vue`, `src/store/app.ts`. Der Abschnitt „Soll-Verhalten" ist über

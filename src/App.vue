@@ -2,6 +2,7 @@
 import { watch, watchEffect } from 'vue'
 import { useTheme } from 'vuetify'
 import { useAppStore } from './store/app'
+import { useAppHistory } from './navigation/useAppHistory'
 import { flushPendingSave } from './persistence/db'
 import { buildVuetifyThemes, setMetaThemeColor } from './theme'
 import AppDrawer from './components/AppDrawer.vue'
@@ -10,6 +11,8 @@ import BackupDialogs from './components/BackupDialogs.vue'
 
 const store = useAppStore()
 const theme = useTheme()
+// Created here first: it owns the browser history and the active car.
+const history = useAppHistory()
 
 store.initialize()
 
@@ -48,7 +51,9 @@ watchEffect(() => {
 
 <template>
   <v-app>
-    <template v-if="store.loaded">
+    <!-- Views render only once the history is in shape, so a deep-link
+         rebuild (replace /, push the page) is not visible. -->
+    <template v-if="store.loaded && history.ready.value">
       <AppDrawer />
       <router-view />
       <BackupDialogs />

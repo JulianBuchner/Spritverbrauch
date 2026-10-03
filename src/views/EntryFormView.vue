@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
+import { onBeforeRouteLeave, useRoute } from 'vue-router'
 import { formatEntryDate, localCalendarDate, todayLocalDate } from '../domain/format'
 import {
   costCentsToInput,
@@ -11,13 +11,14 @@ import {
 } from '../domain/parse'
 import type { Entry } from '../domain/types'
 import { useAppStore } from '../store/app'
+import { useAppHistory } from '../navigation/useAppHistory'
 import { strings } from '../strings'
 
 // Entry form for both routes (SPEC.md section 9.3): /entry/new creates,
 // /entry/:id edits with all values prefilled.
 const store = useAppStore()
+const history = useAppHistory()
 const route = useRoute()
-const router = useRouter()
 
 const routeId = typeof route.params.id === 'string' ? route.params.id : null
 const editedEntry = routeId
@@ -26,9 +27,9 @@ const editedEntry = routeId
 const isEdit = editedEntry !== null
 
 // Unreachable through the UI (unknown entry id, or no car to book an entry
-// on); bail out to the entries list instead of showing a broken form.
+// on); leave the page like back instead of showing a broken form.
 if ((routeId && !editedEntry) || store.carsByPosition.length === 0) {
-  router.replace('/')
+  void history.leavePage()
 }
 
 const carId = ref(editedEntry?.carId ?? store.activeCarId ?? '')
@@ -67,7 +68,8 @@ const dateLabel = computed(() => {
   return date.value === today ? strings.today : formatEntryDate(date.value, today)
 })
 
-const datePickerOpen = ref(false)
+// Overlay with its own history entry: back closes only the picker.
+const datePickerOpen = history.overlayModel('date-picker')
 const pickerDate = computed(() => {
   const [year, month, day] = date.value.split('-').map(Number)
   return new Date(year, month - 1, day)
@@ -131,34 +133,34 @@ function confirm() {
   } else {
     store.addEntry(entry)
   }
-  // A car changed in the form becomes active, so the saved entry is visible.
-  if (carId.value !== store.activeCarId) store.setActiveCar(carId.value)
   saved.value = true
-  router.push('/')
+  // Leaves like back; a car changed in the form becomes active on the home
+  // page (SPEC.md 9.3), following the car selection rules.
+  void history.leavePage(carId.value)
 }
 
-// Leaving with unsaved changes asks once.
-const leaveDialogOpen = ref(false)
+// Leaving with unsaved changes asks once. The dialog is an overlay with its
+// own history entry, opened after the blocked navigation has settled (for
+// Android back, after vue-router restored this entry); back or "Abbrechen"
+// close only the dialog.
+const leaveDialogOpen = history.overlayModel('discard-entry')
 const confirmedLeave = ref(false)
-let pendingTarget: string | null = null
 
-onBeforeRouteLeave((to) => {
+onBeforeRouteLeave(() => {
   if (!isDirty.value || confirmedLeave.value) return true
-  pendingTarget = to.fullPath
   leaveDialogOpen.value = true
   return false
 })
 
 function discardAndLeave() {
   confirmedLeave.value = true
-  leaveDialogOpen.value = false
-  router.push(pendingTarget ?? '/')
+  void history.leavePage()
 }
 </script>
 
 <template>
   <v-app-bar flat>
-    <v-btn icon="mdi-arrow-left" @click="router.push('/')" />
+    <v-btn icon="mdi-arrow-left" @click="history.leavePage()" />
     <v-app-bar-title class="appbar-title">
       {{ isEdit ? strings.entryFormTitleEdit : strings.entryFormTitleNew }}
     </v-app-bar-title>
@@ -238,7 +240,7 @@ function discardAndLeave() {
     </v-btn>
   </v-main>
 
-  <v-dialog v-model="datePickerOpen" width="auto">
+  <v-dialog v-model="datePickerOpen" width="auto" :close-on-back="false">
     <v-date-picker
       :model-value="pickerDate"
       color="primary"
@@ -246,7 +248,7 @@ function discardAndLeave() {
     />
   </v-dialog>
 
-  <v-dialog v-model="leaveDialogOpen" max-width="400">
+  <v-dialog v-model="leaveDialogOpen" max-width="400" :close-on-back="false">
     <v-card rounded="lg">
       <v-card-title class="dialog-title">{{ strings.discardTitle }}</v-card-title>
       <v-card-text>{{ strings.discardMessage }}</v-card-text>

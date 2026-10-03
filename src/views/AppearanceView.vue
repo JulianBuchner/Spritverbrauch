@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
 import { todayLocalDate } from '../domain/format'
 import type { Entry } from '../domain/types'
 import { useAppStore } from '../store/app'
+import { useAppHistory } from '../navigation/useAppHistory'
 import { strings } from '../strings'
 import EntryCard from '../components/EntryCard.vue'
 
@@ -11,7 +11,7 @@ import EntryCard from '../components/EntryCard.vue'
 // with two presets, and a live preview card. Changes apply immediately and
 // are persisted.
 const store = useAppStore()
-const router = useRouter()
+const history = useAppHistory()
 
 const presets = [
   { label: strings.presetBlue, color: '#3159BD' },
@@ -54,7 +54,7 @@ const today = todayLocalDate()
 
 <template>
   <v-app-bar flat>
-    <v-btn icon="mdi-arrow-left" @click="router.push('/')" />
+    <v-btn icon="mdi-arrow-left" @click="history.leavePage()" />
     <v-app-bar-title class="appbar-title">{{ strings.appearance }}</v-app-bar-title>
   </v-app-bar>
 

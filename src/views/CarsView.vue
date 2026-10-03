@@ -1,19 +1,20 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { useAppStore } from '../store/app'
+import { useAppHistory } from '../navigation/useAppHistory'
 import type { Car } from '../domain/types'
 import { strings } from '../strings'
 import CarDialog from '../components/CarDialog.vue'
 
-// Car management per SPEC.md section 9.5 and docs/reference/cars.jpeg.
+// Car management per SPEC.md section 9.5 and docs/reference/cars.jpeg. Both
+// dialogs are overlays with their own history entry.
 const store = useAppStore()
-const router = useRouter()
+const history = useAppHistory()
 
-const dialogOpen = ref(false)
+const dialogOpen = history.overlayModel('car-dialog')
 const editedCar = ref<Car | null>(null)
 
-const deleteDialogOpen = ref(false)
+const deleteDialogOpen = history.overlayModel('delete-car')
 const carToDelete = ref<Car | null>(null)
 
 function openCreate() {
@@ -39,7 +40,7 @@ function confirmDelete() {
 
 <template>
   <v-app-bar flat>
-    <v-btn icon="mdi-arrow-left" @click="router.push('/')" />
+    <v-btn icon="mdi-arrow-left" @click="history.leavePage()" />
     <v-app-bar-title class="appbar-title">{{ strings.carManagement }}</v-app-bar-title>
   </v-app-bar>
 
@@ -73,7 +74,7 @@ function confirmDelete() {
 
   <CarDialog v-model="dialogOpen" :car="editedCar" />
 
-  <v-dialog v-model="deleteDialogOpen" max-width="400">
+  <v-dialog v-model="deleteDialogOpen" max-width="400" :close-on-back="false">
     <v-card v-if="carToDelete" rounded="lg">
       <v-card-title class="dialog-title">
         {{ strings.deleteCarTitle(carToDelete.name) }}

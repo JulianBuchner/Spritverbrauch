@@ -1,15 +1,44 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed, watch } from 'vue'
 import { useAppStore } from '../store/app'
+import { useAppHistory } from '../navigation/useAppHistory'
 import { useBackup } from '../composables/useBackup'
 import { strings } from '../strings'
 
 // The three import dialogs (confirm, result, error), driven by the shared
-// backup state and mounted once in App.vue.
+// backup state and mounted once in App.vue. Each is an overlay with its own
+// history entry; the import state decides which one is wanted, and closing
+// one through the history (Android back, tap outside) clears its state.
 const store = useAppStore()
-const router = useRouter()
+const history = useAppHistory()
 const { state, confirmImport, cancelImport, dismissResult, dismissError } = useBackup()
+
+const confirmOpen = history.overlayModel('import-confirm')
+const resultOpen = history.overlayModel('import-result')
+const errorOpen = history.overlayModel('import-error')
+
+const wantedOverlay = computed(() => {
+  if (state.pending) return 'import-confirm'
+  if (state.result) return 'import-result'
+  if (state.error) return 'import-error'
+  return null
+})
+
+// Confirm -> result swaps the overlay in one history step.
+watch(wantedOverlay, (id, previous) => {
+  if (id) void history.openOverlay(id)
+  else if (previous) void history.closeOverlay(previous)
+})
+
+watch(confirmOpen, (open) => {
+  if (!open && state.pending) cancelImport()
+})
+watch(resultOpen, (open) => {
+  if (!open && state.result) dismissResult()
+})
+watch(errorOpen, (open) => {
+  if (!open && state.error) dismissError()
+})
 
 const resultText = computed(() => {
   if (!state.result) return ''
@@ -19,21 +48,17 @@ const resultText = computed(() => {
     : base
 })
 
-// "Ansehen" leads to the entries list of the default car.
+// "Ansehen" leads to the entries list of the default car; choosing it
+// closes the dialog as part of the same history step.
 function viewEntries() {
-  const defaultCar = store.database.cars.find((car) => car.isDefault)
-  if (defaultCar) store.setActiveCar(defaultCar.id)
-  dismissResult()
-  router.push('/')
+  const defaultCarId = store.defaultCarId
+  if (defaultCarId) void history.selectCar(defaultCarId)
+  else resultOpen.value = false
 }
 </script>
 
 <template>
-  <v-dialog
-    :model-value="state.pending !== null"
-    max-width="420"
-    @update:model-value="(open: boolean) => open || cancelImport()"
-  >
+  <v-dialog v-model="confirmOpen" max-width="420" :close-on-back="false">
     <v-card v-if="state.pending" rounded="lg">
       <v-card-title>{{ strings.importConfirmTitle }}</v-card-title>
       <v-card-text>
@@ -49,11 +74,7 @@ function viewEntries() {
     </v-card>
   </v-dialog>
 
-  <v-dialog
-    :model-value="state.result !== null"
-    max-width="420"
-    @update:model-value="(open: boolean) => open || dismissResult()"
-  >
+  <v-dialog v-model="resultOpen" max-width="420" :close-on-back="false">
     <v-card rounded="lg">
       <v-card-title>{{ strings.importResultTitle }}</v-card-title>
       <v-card-text>{{ resultText }}</v-card-text>
@@ -64,11 +85,7 @@ function viewEntries() {
     </v-card>
   </v-dialog>
 
-  <v-dialog
-    :model-value="state.error !== null"
-    max-width="420"
-    @update:model-value="(open: boolean) => open || dismissError()"
-  >
+  <v-dialog v-model="errorOpen" max-width="420" :close-on-back="false">
     <v-card rounded="lg">
       <v-card-title>{{ strings.importErrorTitle }}</v-card-title>
       <v-card-text>{{ state.error }}</v-card-text>

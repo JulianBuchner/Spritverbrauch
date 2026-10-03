@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useRouter } from 'vue-router'
 import { formatTimestamp } from '../domain/format'
 import { useAppStore } from '../store/app'
+import { useAppHistory } from '../navigation/useAppHistory'
 import { useBackup } from '../composables/useBackup'
 import { strings } from '../strings'
 import pkg from '../../package.json'
@@ -10,7 +10,7 @@ import pkg from '../../package.json'
 // Settings per SPEC.md section 9.7: app version, car and entry counts,
 // links to export and import, plus the backup hint. No empty placeholders.
 const store = useAppStore()
-const router = useRouter()
+const history = useAppHistory()
 const { startExport, startImport } = useBackup()
 
 const lastExportText = computed(() => {
@@ -25,7 +25,7 @@ function exportEntries() {
 
 <template>
   <v-app-bar flat>
-    <v-btn icon="mdi-arrow-left" @click="router.push('/')" />
+    <v-btn icon="mdi-arrow-left" @click="history.leavePage()" />
     <v-app-bar-title class="appbar-title">{{ strings.settings }}</v-app-bar-title>
   </v-app-bar>
 

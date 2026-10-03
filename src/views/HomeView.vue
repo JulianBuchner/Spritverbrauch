@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed, onUnmounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { todayLocalDate } from '../domain/format'
 import { sortEntriesForDisplay } from '../domain/stats'
 import { useAppStore } from '../store/app'
+import { useAppHistory } from '../navigation/useAppHistory'
 import { useBackup } from '../composables/useBackup'
 import { strings } from '../strings'
 import CarDialog from '../components/CarDialog.vue'
@@ -11,11 +11,13 @@ import EntryCard from '../components/EntryCard.vue'
 import TotalsHeader from '../components/TotalsHeader.vue'
 
 // Entries view (SPEC.md section 9.2): totals header, the entry cards sorted
-// by date descending, and the FAB leading to the entry form.
+// by date descending, and the FAB leading to the entry form. The active car
+// comes from the URL (`?car=<id>`, otherwise the default car); the store
+// follows it via useAppHistory.
 const store = useAppStore()
-const router = useRouter()
+const history = useAppHistory()
 const { startImport } = useBackup()
-const addCarDialogOpen = ref(false)
+const addCarDialogOpen = history.overlayModel('add-car-home')
 
 const activeEntries = computed(() =>
   store.database.entries.filter((entry) => entry.carId === store.activeCarId),
@@ -33,7 +35,7 @@ onUnmounted(() => window.clearInterval(todayTimer))
 
 <template>
   <v-app-bar flat>
-    <v-app-bar-nav-icon @click="store.drawerOpen = true" />
+    <v-app-bar-nav-icon @click="history.openOverlay('drawer')" />
     <v-app-bar-title class="appbar-title">
       {{ store.activeCar?.name ?? strings.appTitle }}
     </v-app-bar-title>
@@ -66,7 +68,7 @@ onUnmounted(() => window.clearInterval(todayTimer))
       class="fab"
       color="primary-container"
       elevation="3"
-      @click="router.push('/entry/new')"
+      @click="history.openPage('/entry/new')"
     />
   </v-main>
 

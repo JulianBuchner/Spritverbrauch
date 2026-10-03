@@ -42,7 +42,7 @@ function save() {
 </script>
 
 <template>
-  <v-dialog v-model="open" max-width="400">
+  <v-dialog v-model="open" max-width="400" :close-on-back="false">
     <v-card rounded="lg">
       <v-card-title class="dialog-title">
         {{ car ? strings.editCar : strings.addCar }}

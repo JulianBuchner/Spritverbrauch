@@ -1,46 +1,48 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { useAppStore } from '../store/app'
+import { useAppHistory } from '../navigation/useAppHistory'
 import { useBackup } from '../composables/useBackup'
 import { strings } from '../strings'
 import CarDialog from './CarDialog.vue'
 
-// Temporary (overlaying) navigation drawer per SPEC.md section 9.1.
+// Temporary (overlaying) navigation drawer per SPEC.md section 9.1. Open
+// state lives in the history (one entry while open); car selection and page
+// changes close the drawer as part of the same history step.
 const store = useAppStore()
-const router = useRouter()
+const history = useAppHistory()
 const { startExport, startImport } = useBackup()
 
-const addCarDialogOpen = ref(false)
+const drawerOpen = history.overlayModel('drawer')
+const addCarDialogOpen = history.overlayModel('add-car')
 
 function selectCar(carId: string) {
-  store.setActiveCar(carId)
-  store.drawerOpen = false
+  void history.selectCar(carId)
 }
 
 function navigateTo(path: string) {
-  store.drawerOpen = false
-  router.push(path)
+  void history.openPage(path)
 }
 
 function openAddCar() {
-  store.drawerOpen = false
   addCarDialogOpen.value = true
 }
 
+// Export first: navigator.share needs the user gesture's activation.
 function exportEntries() {
-  store.drawerOpen = false
   void startExport()
+  drawerOpen.value = false
 }
 
 function importEntries() {
-  store.drawerOpen = false
   startImport()
+  drawerOpen.value = false
 }
 </script>
 
 <template>
-  <v-navigation-drawer v-model="store.drawerOpen" temporary>
+  <!-- The route watcher would close the drawer on its own history entry
+       (same URL, new entry); the history closes it instead. -->
+  <v-navigation-drawer v-model="drawerOpen" temporary disable-route-watcher>
     <div class="drawer-title">{{ strings.appTitle }}</div>
 
     <v-list density="comfortable" class="drawer-list">

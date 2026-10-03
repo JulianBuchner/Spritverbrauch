@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useRouter } from 'vue-router'
 import { entryMetrics } from '../domain/stats'
 import { formatEntryDate } from '../domain/format'
 import type { Entry } from '../domain/types'
 import { useAppStore } from '../store/app'
+import { useAppHistory } from '../navigation/useAppHistory'
 import { strings } from '../strings'
 import MetricGrid from './MetricGrid.vue'
 import MetricValue from './MetricValue.vue'
@@ -18,13 +18,17 @@ const props = withDefaults(defineProps<{ entry: Entry; today: string; preview?: 
 })
 
 const store = useAppStore()
-const router = useRouter()
+const history = useAppHistory()
+
+// The ⋮ menu is an overlay with its own history entry; opening the form
+// from it closes the menu and opens the page in one history step.
+const menuOpen = history.overlayModel(`entry-menu-${props.entry.id}`)
 
 const dateLabel = computed(() => formatEntryDate(props.entry.date, props.today))
 const metrics = computed(() => entryMetrics(props.entry))
 
 function edit() {
-  router.push(`/entry/${props.entry.id}`)
+  void history.openPage(`/entry/${props.entry.id}`)
 }
 
 function remove() {
@@ -44,7 +48,7 @@ function remove() {
         <v-icon v-if="preview" icon="mdi-dots-vertical" size="20" class="entry-card-menu-icon" />
         <v-btn v-else icon variant="text" density="comfortable" size="small" class="entry-card-menu">
           <v-icon icon="mdi-dots-vertical" size="20" />
-          <v-menu activator="parent">
+          <v-menu v-model="menuOpen" activator="parent" :close-on-back="false">
             <v-list density="compact">
               <v-list-item :title="strings.edit" @click="edit" />
               <v-list-item :title="strings.delete" @click="remove" />

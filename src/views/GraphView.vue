@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
 import { useTheme } from 'vuetify'
 import {
   Chart,
@@ -25,6 +24,7 @@ import {
   todayLocalDate,
 } from '../domain/format'
 import { useAppStore } from '../store/app'
+import { useAppHistory } from '../navigation/useAppHistory'
 import { strings } from '../strings'
 
 // Graph view per SPEC.md section 9.4 and docs/reference/graphs*.jpeg.
@@ -46,8 +46,11 @@ const METRIC_CONFIG: Record<
 }
 
 const store = useAppStore()
-const router = useRouter()
+const history = useAppHistory()
 const theme = useTheme()
+
+// The metric menu is an overlay with its own history entry.
+const metricMenuOpen = history.overlayModel('graph-metric-menu')
 
 const canvas = ref<HTMLCanvasElement | null>(null)
 let chart: Chart<'line', { x: number; y: number | null }[]> | null = null
@@ -149,10 +152,10 @@ onBeforeUnmount(() => chart?.destroy())
 
 <template>
   <v-app-bar flat>
-    <v-btn icon="mdi-arrow-left" @click="router.push('/')" />
+    <v-btn icon="mdi-arrow-left" @click="history.leavePage()" />
     <v-app-bar-title class="appbar-title">{{ config.title }}</v-app-bar-title>
     <template #append>
-      <v-menu location="bottom end">
+      <v-menu v-model="metricMenuOpen" location="bottom end" :close-on-back="false">
         <template #activator="{ props: menuProps }">
           <v-btn icon="mdi-tune-variant" v-bind="menuProps" />
         </template>

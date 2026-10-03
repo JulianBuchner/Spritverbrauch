@@ -21,9 +21,11 @@ const DEFAULT_SNACKBAR_TIMEOUT_MS = 4000
 
 let nextSnackbarId = 1
 
-// Start-up selection of the active car: the default car; otherwise the car
-// with the youngest entry; otherwise the car at position 0.
-function pickActiveCarId(db: Database): string | null {
+// Default car (start-up selection rule): the default car; otherwise the car
+// with the youngest entry; otherwise the car at position 0. The active car
+// itself follows the URL (src/navigation/useAppHistory.ts) and falls back to
+// this car.
+export function pickDefaultCarId(db: Database): string | null {
   if (db.cars.length === 0) return null
   const defaultCar = db.cars.find((car) => car.isDefault)
   if (defaultCar) return defaultCar.id
@@ -45,16 +47,19 @@ export const useAppStore = defineStore('app', {
   state: () => ({
     database: createEmptyDatabase(),
     loaded: false,
+    // Set only by useAppHistory, which derives it from the URL.
     activeCarId: null as string | null,
     // Session-only graph metric selection; deliberately not persisted.
     graphMetric: 'tripKm' as GraphMetric,
-    drawerOpen: false,
     snackbarQueue: [] as SnackbarMessage[],
   }),
 
   getters: {
     settings(state): Settings {
       return state.database.settings
+    },
+    defaultCarId(state): string | null {
+      return pickDefaultCarId(state.database)
     },
     carsByPosition(state): Car[] {
       return [...state.database.cars].sort((a, b) => a.position - b.position)
@@ -75,7 +80,6 @@ export const useAppStore = defineStore('app', {
       } catch {
         this.showSnackbar(strings.loadError)
       }
-      this.activeCarId = pickActiveCarId(this.database)
       this.loaded = true
     },
 
@@ -102,7 +106,7 @@ export const useAppStore = defineStore('app', {
       this.snackbarQueue.shift()
     },
 
-    setActiveCar(carId: string) {
+    setActiveCar(carId: string | null) {
       this.activeCarId = carId
     },
 
@@ -122,7 +126,6 @@ export const useAppStore = defineStore('app', {
       }
       this.database.cars.push(car)
       this.normalizeCarPositions()
-      if (this.activeCarId === null) this.activeCarId = car.id
       this.persistNow()
     },
 
@@ -146,11 +149,10 @@ export const useAppStore = defineStore('app', {
       // The default role moves to the car the start-up selection rule
       // would pick next.
       if (wasDefault) {
-        const successorId = pickActiveCarId(this.database)
+        const successorId = pickDefaultCarId(this.database)
         const successor = this.database.cars.find((car) => car.id === successorId)
         if (successor) successor.isDefault = true
       }
-      if (this.activeCarId === carId) this.activeCarId = pickActiveCarId(this.database)
       this.persistNow()
     },
 
@@ -200,7 +202,6 @@ export const useAppStore = defineStore('app', {
     // Replaces the whole document (dev fixture loading now, import later).
     replaceDatabase(database: Database) {
       this.database = database
-      this.activeCarId = pickActiveCarId(database)
       this.persistNow()
     },
 
