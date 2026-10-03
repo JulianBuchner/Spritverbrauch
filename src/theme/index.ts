@@ -48,6 +48,10 @@ function mapColors(
     surface: hex(scheme.surface),
     'surface-bright': hex(neutral.tone(surfaceTones.bright)),
     'on-surface': hex(scheme.onSurface),
+    // Always mapped together with on-surface-variant: Vuetify's own default
+    // for surface-variant is an inverted surface, which would pair the M3 text
+    // color with a background of the same lightness (SPEC.md section 10).
+    'surface-variant': hex(scheme.surfaceVariant),
     'on-surface-variant': hex(scheme.onSurfaceVariant),
     'surface-container': hex(neutral.tone(surfaceTones.container)),
     'surface-container-high': hex(neutral.tone(surfaceTones.high)),
@@ -59,6 +63,10 @@ function mapColors(
     'on-secondary': hex(scheme.onSecondary),
     'secondary-container': hex(scheme.secondaryContainer),
     'on-secondary-container': hex(scheme.onSecondaryContainer),
+    // Tooltip and snackbar colors (applied globally in styles/main.css).
+    'inverse-surface': hex(scheme.inverseSurface),
+    'inverse-on-surface': hex(scheme.inverseOnSurface),
+    'inverse-primary': hex(scheme.inversePrimary),
     outline: hex(scheme.outline),
     'outline-variant': hex(scheme.outlineVariant),
     error: hex(scheme.error),

@@ -306,6 +306,13 @@ Das ist österreichisches Deutsch und so gewollt.
 
 Kein BottomNav. Navigation läuft über den Drawer.
 
+**Navigation und Zurück-Verhalten** sind in `docs/bugs/02-zurueck-navigation.md`, Abschnitt
+„Soll-Verhalten", verbindlich festgelegt. Dieser Abschnitt ist Teil dieser Spezifikation und
+geht allen Navigationsangaben in 9.1 bis 9.7 vor. Kurzfassung: der Verlauf ist höchstens
+`/` → `/?car=<id>` → eine Unterseite → ein Overlay tief; Zurück entfernt immer den obersten
+Eintrag; auf der Startseite mit anderem Fahrzeug führt Zurück erst zum Standardfahrzeug, dann
+schließt die App. Die gesamte Navigation liegt an einer einzigen Stelle im Code.
+
 ### 9.1 Drawer
 
 Temporär (überlagernd), geöffnet über das Hamburger-Icon.
@@ -474,11 +481,41 @@ und auf ein Vuetify-Theme gemappt. Mindestens diese Keys:
 
 ```
 background, surface, surface-bright, on-surface, on-surface-variant,
+surface-variant,
 surface-container, surface-container-high,
 primary, on-primary, primary-container, on-primary-container,
 secondary, on-secondary, secondary-container, on-secondary-container,
+inverse-surface, inverse-on-surface, inverse-primary,
 outline, outline-variant, error, on-error
 ```
+
+**Namenskonflikt Vuetify ↔ M3.** Vuetify versteht unter `surface-variant` eine *invertierte*
+Fläche (dunkel im hellen Theme) mit `on-surface-variant` als Gegenfarbe, gedacht für Tooltips
+und Snackbars. M3 versteht unter demselben Paar eine leicht getönte Fläche mit gedämpftem
+Text. Hier gilt durchgängig die M3-Bedeutung: `surface-variant` = M3 `surfaceVariant`,
+`on-surface-variant` = M3 `onSurfaceVariant`. Beide müssen **immer gemeinsam** gemappt werden —
+fehlt einer, füllt Vuetify ihn mit seinem eigenen Default auf, und das Paar hat gleiche
+Helligkeit (siehe `docs/bugs/01-tooltip-kontrast.md`). Tooltips und Snackbars verwenden
+stattdessen die inversen Rollen.
+
+Ein Unit-Test sichert für beide Presets (`#3159BD`, `#B03A66`) in hell und dunkel ab, dass
+diese Text-/Hintergrund-Paare mindestens 4,5 : 1 Kontrast haben (WCAG AA):
+
+| Text | Hintergrund | wo |
+|---|---|---|
+| `on-surface` | `background` | Kennzahlen der Gesamtkachel |
+| `on-surface` | `surface-container-high` | Kennzahlen auf Karten |
+| `primary` | `surface-container-high` | Datum auf Karten |
+| `on-surface-variant` | `surface-container-high` | Stichprobenhinweis, Labels |
+| `on-surface-variant` | `surface-variant` | jede Vuetify-Komponente mit diesem Paar |
+| `inverse-on-surface` | `inverse-surface` | Tooltip, Snackbar-Text |
+| `inverse-primary` | `inverse-surface` | Snackbar-Aktion |
+| `on-primary` | `primary` | `Bestätigen`, gewählter Tag |
+| `on-primary-container` | `primary-container` | FAB |
+| `on-secondary-container` | `secondary-container` | aktives Fahrzeug, `Heute` |
+
+Nachgerechnet über die M3-Tonwerte liegen alle Paare bei korrektem Mapping bei mindestens
+5 : 1. Schlägt der Test fehl, ist das Mapping falsch, nicht der Schwellwert.
 
 Rollenzuordnung im UI:
 
@@ -493,6 +530,9 @@ Rollenzuordnung im UI:
 | FAB, Auto-Icon-Fläche | `primary-container` |
 | `Bestätigen` | `primary` gefüllt |
 | Marker-Icon, Stichprobenhinweis, Feldlabels | `on-surface-variant` |
+| Tooltip | `inverse-surface` mit `inverse-on-surface` |
+| Snackbar | `inverse-surface` mit `inverse-on-surface`, Aktion in `inverse-primary` |
+| gewählter Tag im Datumsdialog | `primary` mit `on-primary` |
 | `<meta name="theme-color">` | `surface` der aktuell wirksamen Palette |
 
 Die Einheiten sind **nicht** abgedunkelt. An `docs/reference/main_window.jpeg` nachgemessen:

@@ -239,7 +239,11 @@ function discardAndLeave() {
   </v-main>
 
   <v-dialog v-model="datePickerOpen" width="auto">
-    <v-date-picker :model-value="pickerDate" @update:model-value="onDatePicked" />
+    <v-date-picker
+      :model-value="pickerDate"
+      color="primary"
+      @update:model-value="onDatePicked"
+    />
   </v-dialog>
 
   <v-dialog v-model="leaveDialogOpen" max-width="400">

@@ -27,7 +27,7 @@ function onAction() {
   >
     {{ current.text }}
     <template v-if="current.action" #actions>
-      <v-btn variant="text" color="primary" @click="onAction">
+      <v-btn variant="text" @click="onAction">
         {{ current.action.label }}
       </v-btn>
     </template>

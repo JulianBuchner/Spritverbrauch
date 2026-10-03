@@ -37,6 +37,20 @@
   letter-spacing: normal;
 }
 
+/* Tooltips and snackbars use the M3 inverse roles (SPEC.md section 10).
+   Vuetify styles both with surface-variant / on-surface-variant, which here
+   carry the M3 meaning (tinted surface, muted text), not Vuetify's inverted
+   surface. Explicit color props (bg-* utility classes) still win. */
+.v-tooltip.v-tooltip > .v-overlay__content,
+.v-snackbar.v-snackbar .v-snackbar__wrapper {
+  background: rgb(var(--v-theme-inverse-surface));
+  color: rgb(var(--v-theme-inverse-on-surface));
+}
+
+.v-snackbar.v-snackbar .v-snackbar__actions .v-btn {
+  color: rgb(var(--v-theme-inverse-primary));
+}
+
 /* Roboto or an equivalent system font; only weights 400 and 500 are used. */
 html {
   font-family:

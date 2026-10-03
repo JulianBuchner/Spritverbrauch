@@ -14,10 +14,3 @@ Für keinen dieser Punkte existiert Code oder ein Schemafeld auf Vorrat.
 - **Tankvolumen** — Tankgröße pro Fahrzeug, z. B. für Restreichweiten-Schätzungen.
 - **Teilbetankungen im UI** — `isFull` wird bereits gespeichert, aber in v1 nirgends
   ausgewertet oder angezeigt.
-
-## Mängel aus der Alltagsnutzung
-
-Je eine Datei unter `docs/v2/` mit Symptom, Ursache, Lösungsvorschlag und Abnahme.
-
-- [01 — Tooltip (und vermutlich Snackbar) unlesbar](v2/01-tooltip-kontrast.md)
-- [02 — Zurück-Taste durchläuft den gesamten Verlauf](v2/02-zurueck-navigation.md)
