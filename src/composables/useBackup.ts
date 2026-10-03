@@ -57,7 +57,10 @@ function downloadFile(file: File): void {
   const anchor = document.createElement('a')
   anchor.href = url
   anchor.download = file.name
+  // Firefox only starts the download for an anchor attached to the document.
+  document.body.appendChild(anchor)
   anchor.click()
+  anchor.remove()
   // Revoke only after the download has had time to start.
   setTimeout(() => URL.revokeObjectURL(url), 10_000)
 }

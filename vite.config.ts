@@ -1,6 +1,7 @@
 /// <reference types="vitest/config" />
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import vuetify from 'vite-plugin-vuetify'
 import { VitePWA } from 'vite-plugin-pwa'
 
 // Repo name from the git remote (github.com/JulianBuchner/Spritverbrauch).
@@ -11,6 +12,8 @@ export default defineConfig({
   base: `/${REPO_NAME}/`,
   plugins: [
     vue(),
+    // Imports only the Vuetify components and directives the templates use.
+    vuetify({ autoImport: true }),
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {

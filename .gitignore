@@ -5,3 +5,6 @@ node_modules/
 dist/
 dev-dist/
 *.local
+
+# Local Claude Code permissions, per machine
+.claude/settings.local.json
