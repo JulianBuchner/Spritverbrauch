@@ -53,11 +53,11 @@ Julian hat dafür am 2026-10-25 ausdrücklich eine Ausnahme erteilt. Sie deckt g
 kopiert aus `Home-Dashboard/templates/docstore-server.ts`. Er lauscht nur auf `127.0.0.1:3200`
 und vertraut dem Hub, der `/Spritverbrauch/api/*` ohne den Prefix dorthin weiterleitet.
 
-| Methode | Pfad | Antwort |
-|---|---|---|
-| `GET` | `/health` | `200 {"ok":true,"app":"spritverbrauch"}` |
-| `GET` | `/docs/db` | `200 {data, rev, updatedAt}` oder `404` |
-| `PUT` | `/docs/db` mit `{data, rev}` | `200 {rev}`, bei fremder Änderung `409 {data, rev, updatedAt}` |
+| Methode | Pfad                         | Antwort                                                        |
+| ------- | ---------------------------- | -------------------------------------------------------------- |
+| `GET`   | `/health`                    | `200 {"ok":true,"app":"spritverbrauch"}`                       |
+| `GET`   | `/docs/db`                   | `200 {data, rev, updatedAt}` oder `404`                        |
+| `PUT`   | `/docs/db` mit `{data, rev}` | `200 {rev}`, bei fremder Änderung `409 {data, rev, updatedAt}` |
 
 Env: `HOST` (Default `127.0.0.1`), `PORT` (Default `3200`), `DB_PATH` (Default
 `data/spritverbrauch.db`, in `.gitignore`), `BODY_LIMIT_BYTES`. Die Tabelle `docs` wird mit
