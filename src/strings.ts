@@ -31,6 +31,9 @@ export const strings = {
   // Persistence errors
   loadError: 'Daten konnten nicht geladen werden',
   saveError: 'Daten konnten nicht gespeichert werden',
+  syncConflict: 'Daten wurden auf einem anderen Gerät geändert und neu geladen',
+  syncOffline: 'Server nicht erreichbar – Änderungen werden später synchronisiert',
+  sessionExpired: 'Sitzung abgelaufen, bitte neu einloggen',
 
   // Entries view
   totalsLabel: 'Insgesamt:',
@@ -91,7 +94,8 @@ export const strings = {
   appVersion: 'App-Version',
   carCount: 'Fahrzeuge',
   entryCount: 'Einträge',
-  backupHint: 'Die Daten liegen nur in diesem Browser — der Export ist das einzige Backup.',
+  backupHint:
+    'Die Daten werden auf den Server synchronisiert und in diesem Browser zwischengespeichert — der Export bleibt ein zusätzliches Backup.',
   lastExported: (formatted: string) => `Zuletzt exportiert: ${formatted}.`,
   neverExported: 'Noch nie exportiert.',
 

@@ -2,7 +2,9 @@ import { defineStore } from 'pinia'
 import { createEmptyDatabase } from '../domain/types'
 import type { Car, Database, Entry, Settings } from '../domain/types'
 import type { GraphMetric } from '../domain/graph'
-import { loadDatabase, saveDatabase, saveDatabaseDebounced } from '../persistence/db'
+import { newId } from '../domain/id'
+import { loadDatabase, saveDatabase, saveDatabaseDebounced, subscribeSync } from '../persistence/db'
+import type { SyncEvent } from '../persistence/db'
 import { strings } from '../strings'
 
 export interface SnackbarAction {
@@ -74,6 +76,7 @@ export const useAppStore = defineStore('app', {
 
   actions: {
     async initialize() {
+      subscribeSync((event) => this.handleSyncEvent(event))
       try {
         const stored = await loadDatabase()
         if (stored) this.database = stored
@@ -81,6 +84,34 @@ export const useAppStore = defineStore('app', {
         this.showSnackbar(strings.loadError)
       }
       this.loaded = true
+    },
+
+    // Server state arrives after the local copy was rendered (see
+    // persistence/db.ts). A conflict replaces the local state without merging.
+    handleSyncEvent(event: SyncEvent) {
+      switch (event.type) {
+        case 'remote':
+          this.database = event.db
+          break
+        case 'conflict':
+          this.database = event.db
+          this.showSnackbar(strings.syncConflict, { timeoutMs: 6000 })
+          break
+        case 'offline':
+          this.showSnackbar(strings.syncOffline)
+          break
+        case 'unauthorized':
+          this.showSnackbar(strings.sessionExpired)
+          // Long enough to read the snackbar; the hub's login page brings the
+          // user back here via `next`.
+          setTimeout(() => {
+            location.assign(
+              '/login?next=' +
+                encodeURIComponent(location.pathname + location.search + location.hash),
+            )
+          }, 1500)
+          break
+      }
     },
 
     // Cars and entries changes are written immediately; only settings
@@ -116,7 +147,7 @@ export const useAppStore = defineStore('app', {
 
     addCar(name: string, isDefault: boolean) {
       const car: Car = {
-        id: crypto.randomUUID(),
+        id: newId(),
         name,
         position: this.database.cars.length,
         isDefault,

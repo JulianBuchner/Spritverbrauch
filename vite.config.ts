@@ -8,12 +8,27 @@ import { VitePWA } from 'vite-plugin-pwa'
 // GitHub Pages serves the app under /<repo-name>/.
 const REPO_NAME = 'Spritverbrauch'
 
+// Local development without the hub: `npm run server` starts the document
+// store on 127.0.0.1:3200, and this proxy strips the prefix the hub would
+// strip (`/Spritverbrauch/api/*` -> `/*`).
+const apiProxy = {
+  [`/${REPO_NAME}/api`]: {
+    target: 'http://127.0.0.1:3200',
+    rewrite: (path: string) => path.replace(new RegExp(`^/${REPO_NAME}/api`), ''),
+  },
+}
+
 export default defineConfig({
   base: `/${REPO_NAME}/`,
   plugins: [
     vue(),
     // Imports only the Vuetify components and directives the templates use.
     vuetify({ autoImport: true }),
+    // Over plain HTTP (the hub, for now) the browser registers no service
+    // worker; that is expected. For later, with HTTPS: the Workbox
+    // NavigationRoute has no denylist and answers every navigation under
+    // /Spritverbrauch/ with the cached index.html, which would hide the
+    // hub's login redirect. The 401 handling in the store covers that case.
     VitePWA({
       registerType: 'autoUpdate',
       workbox: {
@@ -41,6 +56,8 @@ export default defineConfig({
       },
     }),
   ],
+  server: { proxy: apiProxy },
+  preview: { proxy: apiProxy },
   build: {
     rolldownOptions: {
       output: {
