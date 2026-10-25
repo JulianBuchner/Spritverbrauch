@@ -7,6 +7,7 @@
 import type { Car, Database, Entry, Settings } from './types'
 import { createEmptyDatabase } from './types'
 import { localCalendarDate } from './format'
+import { newId } from './id'
 
 export type ImportResult = {
   database: Database
@@ -108,7 +109,7 @@ function importReferenceFormat(raw: Record<string, unknown>): ImportResult {
   const cars: Car[] = [...refCars]
     .sort((a, b) => a.position - b.position)
     .map((refCar, index) => {
-      const id = crypto.randomUUID()
+      const id = newId()
       idToUuid.set(refCar.id, id)
       // position is re-normalized to be gapless
       return { id, name: refCar.name, position: index, isDefault: false }
@@ -138,7 +139,7 @@ function importReferenceFormat(raw: Record<string, unknown>): ImportResult {
     const liters = Math.round(requireNumber(value.liter, message) * 1000) / 1000
     const costCents = Math.round(requireNumber(value.price, message) * 100)
     return {
-      id: crypto.randomUUID(),
+      id: newId(),
       carId,
       date: localCalendarDate(new Date(dateMs)),
       tripKm,

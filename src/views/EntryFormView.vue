@@ -9,6 +9,7 @@ import {
   parseLitersInput,
   parseTripKmInput,
 } from '../domain/parse'
+import { newId } from '../domain/id'
 import type { Entry } from '../domain/types'
 import { useAppStore } from '../store/app'
 import { useAppHistory } from '../navigation/useAppHistory'
@@ -118,7 +119,7 @@ function confirm() {
   if (parsedKm.value === null || parsedLiters.value === null || parsedCost.value === null) return
 
   const entry: Entry = {
-    id: editedEntry?.id ?? crypto.randomUUID(),
+    id: editedEntry?.id ?? newId(),
     carId: carId.value,
     date: date.value,
     tripKm: parsedKm.value,

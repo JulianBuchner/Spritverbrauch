@@ -1,5 +1,5 @@
 export interface Car {
-  id: string // UUID (crypto.randomUUID())
+  id: string // UUID v4 (newId())
   name: string // not empty
   position: number // order in the sidebar, 0-based, gapless
   isDefault: boolean // at most one car is true
