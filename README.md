@@ -24,15 +24,19 @@ npm run server     Document-Store-Backend auf 127.0.0.1:3200 (Node ≥ 22.18)
 
 ## Deployment
 
-Jeder Push auf `main` baut die App per GitHub Action und deployt sie nach GitHub Pages
-(`.github/workflows/deploy.yml`). Die App liegt dann unter
-`https://julianbuchner.github.io/Spritverbrauch/`.
+Die App wird auf dem PC gebaut und auf den Raspberry Pi kopiert, wo sie hinter dem
+Home-Dashboard-Hub unter `http://julian-pi.fritz.box:22110/Spritverbrauch/` läuft:
 
-Voraussetzung: In den Repo-Einstellungen unter **Settings → Pages** muss als Source
-**GitHub Actions** gewählt sein.
+```sh
+deploy/deploy.sh spritverbrauch   # im Repo Home-Dashboard, Git Bash
+```
+
+Das Skript baut die App (`npm ci && npm run build`), kopiert `dist/`, `server/` und
+`package.json` nach `~/apps/Spritverbrauch` auf den Pi und startet `spritverbrauch-api` per
+pm2 neu. Details stehen in `docs/pi-setup.md` im Repo Home-Dashboard.
 
 Die `base`-URL (`/Spritverbrauch/`) ist in `vite.config.ts` hinterlegt; der Router läuft im
-Hash-Modus, damit GitHub Pages keine 404-Fallback-Kopie braucht.
+Hash-Modus. Das frühere GitHub-Pages-Deployment wurde am 2026-10-25 abgeschaltet.
 
 ## Hub und Server-Synchronisierung
 
